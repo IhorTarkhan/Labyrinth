@@ -52,4 +52,12 @@ public class Point {
     public Point getBottom() {
         return bottomJump.getOppositeTo(this);
     }
+
+    public Point getLeft() {
+        return leftJump.getOppositeTo(this);
+    }
+
+    public Point getTop() {
+        return topJump.getOppositeTo(this);
+    }
 }
