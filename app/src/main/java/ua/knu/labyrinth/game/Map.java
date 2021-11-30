@@ -10,6 +10,27 @@ public class Map {
         this.rootTopLeft = rootTopLeft;
     }
 
+    public void generateMap(int size){
+        Point rightBottom = Point.builder().build("a" + size + size);
+
+        Point currentRowPoint = rightBottom;
+
+        for (int i = 0; i < size; i++) {
+            Point nextLeft = Point.builder()
+                    .right(currentRowPoint, false)
+                    .build("a");
+            currentRowPoint = nextLeft;
+        }
+
+        Point currentColumnPoint = rightBottom;
+        for (int i = 0; i < size; i++) {
+            Point nextTop = Point.builder()
+                    .bottom(currentColumnPoint, false)
+                    .build("a");
+            currentColumnPoint = nextTop;
+        }
+    }
+
     public List<List<Point>> getMatrix() {
         List<List<Point>> result = new ArrayList<>();
 
