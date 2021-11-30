@@ -10,7 +10,7 @@ public class Map {
         this.rootTopLeft = rootTopLeft;
     }
 
-    public void generateMap(int size){
+    public static void generateMap(int size){
         Point rightBottom = Point.builder().build("a" + size + size);
 
         Point currentRowPoint = rightBottom;
