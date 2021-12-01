@@ -60,4 +60,20 @@ public class Point {
     public Point getTop() {
         return topJump.getOppositeTo(this);
     }
+
+    public boolean isBorderRight() {
+        return rightJump.isBorder;
+    }
+
+    public boolean isBorderBottom() {
+        return bottomJump.isBorder;
+    }
+
+    public boolean isBorderLeft() {
+        return leftJump.isBorder;
+    }
+
+    public boolean isBorderTop() {
+        return topJump.isBorder;
+    }
 }
