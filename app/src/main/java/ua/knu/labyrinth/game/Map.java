@@ -72,6 +72,88 @@ public class Map {
         return connectedTops.size() == size * size;
     }
 
+    private Point getPoint(int xPosition, int yPosition)
+    {
+        Point result = rootTopLeft;
+        for (int x = 0; x < xPosition; x++) {
+            result = result.getRight();
+        }
+        for (int y = 0; y < yPosition; y++) {
+            result = result.getBottom();
+        }
+        return result;
+    }
+
+    private boolean createBorder(Point point, String direction){
+        switch (direction){
+            case "left":
+                if (point.isBorderLeft()) {
+                    return false;
+                } else {
+                    point.setBorderLeft(true);
+                    return true;
+                }
+            case "right":
+                if (point.isBorderRight()) {
+                    return false;
+                } else {
+                    point.setBorderRight(true);
+                    return true;
+                }
+            case "top":
+                if (point.isBorderTop()) {
+                    return false;
+                } else {
+                    point.setBorderTop(true);
+                    return true;
+                }
+            case "bottom":
+                if (point.isBorderBottom()) {
+                    return false;
+                } else {
+                    point.setBorderBottom(true);
+                    return true;
+                }
+            default:
+                return false;
+        }
+    }
+
+    private boolean deleteBorder(Point point, String direction){
+        switch (direction){
+            case "left":
+                if (point.isBorderLeft()) {
+                    return false;
+                } else {
+                    point.setBorderLeft(false);
+                    return true;
+                }
+            case "right":
+                if (point.isBorderRight()) {
+                    return false;
+                } else {
+                    point.setBorderRight(false);
+                    return true;
+                }
+            case "top":
+                if (point.isBorderTop()) {
+                    return false;
+                } else {
+                    point.setBorderTop(false);
+                    return true;
+                }
+            case "bottom":
+                if (point.isBorderBottom()) {
+                    return false;
+                } else {
+                    point.setBorderBottom(false);
+                    return true;
+                }
+            default:
+                return false;
+        }
+    }
+
     public List<List<Point>> getMatrix() {
         List<List<Point>> result = new ArrayList<>();
 
