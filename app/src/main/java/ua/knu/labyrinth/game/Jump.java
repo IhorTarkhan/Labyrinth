@@ -20,4 +20,8 @@ public class Jump {
         }
         throw new IllegalArgumentException();
     }
+
+    public void setBorder(boolean border) {
+        isBorder = border;
+    }
 }
