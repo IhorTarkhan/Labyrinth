@@ -5,9 +5,11 @@ import java.util.List;
 
 public class Map {
     private Point rootTopLeft;
+    Integer size;
 
     public Map(Point rootTopLeft) {
         this.rootTopLeft = rootTopLeft;
+        this.size = 1;
     }
 
     public static void generateMap(int size){
@@ -29,6 +31,45 @@ public class Map {
                     .build("a");
             currentColumnPoint = nextTop;
         }
+    }
+
+    private void accessibleTops(Point current, List<Point> connected){
+
+        Point left = current.getLeft();
+        Point right = current.getRight();
+        Point bottom = current.getBottom();
+        Point top = current.getTop();
+
+        if (!current.isBorderLeft() && left != null){
+            if (!connected.contains(left)){
+                connected.add(left);
+                accessibleTops(left, connected);
+            }
+        }
+        if (!current.isBorderRight() && right != null){
+            if (!connected.contains(right)){
+                connected.add(right);
+                accessibleTops(right, connected);
+            }
+        }
+        if (!current.isBorderBottom() && bottom != null){
+            if (!connected.contains(bottom)){
+                connected.add(bottom);
+                accessibleTops(bottom, connected);
+            }
+        }
+        if (!current.isBorderTop() && top != null){
+            if (!connected.contains(top)){
+                connected.add(top);
+                accessibleTops(top, connected);
+            }
+        }
+    }
+
+    private boolean allTopsAreConnected() {
+        List<Point> connectedTops = new ArrayList<>();
+        accessibleTops(rootTopLeft, connectedTops);
+        return connectedTops.size() == size * size;
     }
 
     public List<List<Point>> getMatrix() {
