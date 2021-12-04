@@ -14,20 +14,20 @@ public class Map {
     }
 
     public static Map generateMap(int size) {
-        Point rightBottom = Point.builder().build("a" + size + size);
+        Point rightBottom = Point.builder().build();
 
         Point currentRow = rightBottom;
         for (int i = 0; i < size - 1; i++) {
             currentRow = Point.builder()
                     .right(currentRow, false)
-                    .build("a");
+                    .build();
         }
 
         Point currentColumn = rightBottom;
         for (int i = 0; i < size - 1; i++) {
             currentColumn = Point.builder()
                     .bottom(currentColumn, false)
-                    .build("a");
+                    .build();
         }
 
         currentColumn = rightBottom.getLeft();
@@ -38,7 +38,7 @@ public class Map {
                 Point current = Point.builder()
                         .bottom(currentBottom, false)
                         .right(currentRight, false)
-                        .build("a");
+                        .build();
                 currentBottom = currentBottom.getTop();
                 currentRight = currentRight.getTop();
                 if (i == 1 && j == 1) {

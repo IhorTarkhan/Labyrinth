@@ -5,17 +5,13 @@ public class Point {
     private Jump rightJump;
     private Jump topJump;
     private Jump bottomJump;
-    private String name;
 
     public Point(
-            String name,
             Point leftPoint, boolean leftBorder,
             Point rightPoint, boolean rightBorder,
             Point topPoint, boolean topBorder,
             Point bottomPoint, boolean bottomBorder
     ) {
-        this.name = name;
-
         Jump leftJump = new Jump(this, leftPoint, leftBorder);
         this.leftJump = leftJump;
         if (leftPoint != null) {
