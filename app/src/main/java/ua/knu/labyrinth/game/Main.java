@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Main {
     public static void main() {
+        Map.generateMap(10);
         System.out.println("-----------------tut-----------------");
         Point c3 = Point.builder().build("c3");
 
