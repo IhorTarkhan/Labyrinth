@@ -6,11 +6,11 @@ import java.util.Random;
 
 public class Map {
     private final Point rootTopLeft;
-    Integer size;
+    int size;
 
-    public Map(Point rootTopLeft) {
+    public Map(Point rootTopLeft, int size) {
         this.rootTopLeft = rootTopLeft;
-        this.size = 1;
+        this.size = size;
     }
 
     public static Map generateMap(int size) {
@@ -41,8 +41,8 @@ public class Map {
                         .build("a");
                 currentBottom = currentBottom.getTop();
                 currentRight = currentRight.getTop();
-                if (i == 1 && j == 1){
-                    return new Map(current);
+                if (i == 1 && j == 1) {
+                    return new Map(current, size);
                 }
             }
             currentColumn = currentColumn.getLeft();
@@ -150,19 +150,36 @@ public class Map {
             }
         }
     }
-/*
+
     public void generateBorderHard() {
         Point rowIterator = this.rootTopLeft;
         int numberOfBorders = (size - 1) * (size - 1);
-        int currentNumberOfBorder = 0;
+        int currentNumberOfBorders = 0;
         while (rowIterator != null) {
             Point iterator = rowIterator;
             while (iterator.getRight() != null) {
+                List<Direction> directions = new ArrayList<>();
+                while (directions.size() < 4) {
+                    Direction direction = Direction.randomDirection(directions);
+                    if (!iterator.isBorderDirection(direction)) {
+                        createBorder(iterator, direction);
+                        if (allTopsAreConnected()) {
+                            currentNumberOfBorders++;
+                            break;
+                        } else {
+                            deleteBorder(iterator, direction);
+                        }
+                    }
+                    directions.add(direction);
+                }
+                if (currentNumberOfBorders == numberOfBorders) {
+                    return;
+                }
                 iterator = iterator.getRight();
             }
             rowIterator = rowIterator.getBottom();
         }
-    }*/
+    }
 
     public List<List<Point>> getMatrix() {
         List<List<Point>> result = new ArrayList<>();
