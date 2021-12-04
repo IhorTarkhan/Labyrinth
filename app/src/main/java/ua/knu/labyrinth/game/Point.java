@@ -1,11 +1,11 @@
 package ua.knu.labyrinth.game;
 
 public class Point {
-    public Jump leftJump;
-    public Jump rightJump;
-    public Jump topJump;
-    public Jump bottomJump;
-    public String name;
+    private Jump leftJump;
+    private Jump rightJump;
+    private Jump topJump;
+    private Jump bottomJump;
+    private String name;
 
     public Point(
             String name,
@@ -59,5 +59,37 @@ public class Point {
 
     public Point getTop() {
         return topJump.getOppositeTo(this);
+    }
+
+    public boolean isBorderRight() {
+        return rightJump.isBorder;
+    }
+
+    public boolean isBorderBottom() {
+        return bottomJump.isBorder;
+    }
+
+    public boolean isBorderLeft() {
+        return leftJump.isBorder;
+    }
+
+    public boolean isBorderTop() {
+        return topJump.isBorder;
+    }
+
+    public void setBorderLeft(boolean border){
+        leftJump.setBorder(border);
+    }
+
+    public void setBorderRight(boolean border){
+        rightJump.setBorder(border);
+    }
+
+    public void setBorderTop(boolean border){
+        topJump.setBorder(border);
+    }
+
+    public void setBorderBottom(boolean border){
+        bottomJump.setBorder(border);
     }
 }

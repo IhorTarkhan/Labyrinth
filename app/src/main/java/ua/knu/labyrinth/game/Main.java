@@ -52,8 +52,7 @@ public class Main {
             List<Point> row = matrix.get(i);
             for (int j = 0; j < row.size(); j++) {
                 Point point = row.get(j);
-                System.out.print(point.name);
-                if (point.rightJump.isBorder) {
+                if (point.isBorderRight()) {
                     System.out.print(" b ");
                 } else {
                     System.out.print(" e ");
