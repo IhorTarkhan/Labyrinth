@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Map {
-    private Point rootTopLeft;
+    private final Point rootTopLeft;
     Integer size;
 
     public Map(Point rootTopLeft) {
@@ -12,25 +12,41 @@ public class Map {
         this.size = 1;
     }
 
-    public static void generateMap(int size){
+    public static Map generateMap(int size) {
         Point rightBottom = Point.builder().build("a" + size + size);
 
-        Point currentRowPoint = rightBottom;
-
-        for (int i = 0; i < size; i++) {
-            Point nextLeft = Point.builder()
-                    .right(currentRowPoint, false)
+        Point currentRow = rightBottom;
+        for (int i = 0; i < size - 1; i++) {
+            currentRow = Point.builder()
+                    .right(currentRow, false)
                     .build("a");
-            currentRowPoint = nextLeft;
         }
 
-        Point currentColumnPoint = rightBottom;
-        for (int i = 0; i < size; i++) {
-            Point nextTop = Point.builder()
-                    .bottom(currentColumnPoint, false)
+        Point currentColumn = rightBottom;
+        for (int i = 0; i < size - 1; i++) {
+            currentColumn = Point.builder()
+                    .bottom(currentColumn, false)
                     .build("a");
-            currentColumnPoint = nextTop;
         }
+
+        currentColumn = rightBottom.getLeft();
+        for (int i = size - 1; i > 0; i--) {
+            Point currentBottom = currentColumn;
+            Point currentRight = currentColumn.getRight().getTop();
+            for (int j = size - 1; j > 0; j--) {
+                Point current = Point.builder()
+                        .bottom(currentBottom, false)
+                        .right(currentRight, false)
+                        .build("a");
+                currentBottom = currentBottom.getTop();
+                currentRight = currentRight.getTop();
+                if (i == 1 && j == 1){
+                    return new Map(current);
+                }
+            }
+            currentColumn = currentColumn.getLeft();
+        }
+        throw new IllegalArgumentException();
     }
 
     private void accessibleTops(Point current, List<Point> connected){
