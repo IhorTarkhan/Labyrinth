@@ -2,31 +2,32 @@ package ua.knu.labyrinth.game;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Map {
     private final Point rootTopLeft;
-    Integer size;
+    int size;
 
-    public Map(Point rootTopLeft) {
+    public Map(Point rootTopLeft, int size) {
         this.rootTopLeft = rootTopLeft;
-        this.size = 1;
+        this.size = size;
     }
 
     public static Map generateMap(int size) {
-        Point rightBottom = Point.builder().build("a" + size + size);
+        Point rightBottom = Point.builder().build();
 
         Point currentRow = rightBottom;
         for (int i = 0; i < size - 1; i++) {
             currentRow = Point.builder()
                     .right(currentRow, false)
-                    .build("a");
+                    .build();
         }
 
         Point currentColumn = rightBottom;
         for (int i = 0; i < size - 1; i++) {
             currentColumn = Point.builder()
                     .bottom(currentColumn, false)
-                    .build("a");
+                    .build();
         }
 
         currentColumn = rightBottom.getLeft();
@@ -37,11 +38,11 @@ public class Map {
                 Point current = Point.builder()
                         .bottom(currentBottom, false)
                         .right(currentRight, false)
-                        .build("a");
+                        .build();
                 currentBottom = currentBottom.getTop();
                 currentRight = currentRight.getTop();
-                if (i == 1 && j == 1){
-                    return new Map(current);
+                if (i == 1 && j == 1) {
+                    return new Map(current, size);
                 }
             }
             currentColumn = currentColumn.getLeft();
@@ -49,33 +50,33 @@ public class Map {
         throw new IllegalArgumentException();
     }
 
-    private void accessibleTops(Point current, List<Point> connected){
+    private void accessibleTops(Point current, List<Point> connected) {
 
         Point left = current.getLeft();
         Point right = current.getRight();
         Point bottom = current.getBottom();
         Point top = current.getTop();
 
-        if (!current.isBorderLeft() && left != null){
-            if (!connected.contains(left)){
+        if (!current.isBorderLeft() && left != null) {
+            if (!connected.contains(left)) {
                 connected.add(left);
                 accessibleTops(left, connected);
             }
         }
-        if (!current.isBorderRight() && right != null){
-            if (!connected.contains(right)){
+        if (!current.isBorderRight() && right != null) {
+            if (!connected.contains(right)) {
                 connected.add(right);
                 accessibleTops(right, connected);
             }
         }
-        if (!current.isBorderBottom() && bottom != null){
-            if (!connected.contains(bottom)){
+        if (!current.isBorderBottom() && bottom != null) {
+            if (!connected.contains(bottom)) {
                 connected.add(bottom);
                 accessibleTops(bottom, connected);
             }
         }
-        if (!current.isBorderTop() && top != null){
-            if (!connected.contains(top)){
+        if (!current.isBorderTop() && top != null) {
+            if (!connected.contains(top)) {
                 connected.add(top);
                 accessibleTops(top, connected);
             }
@@ -88,8 +89,7 @@ public class Map {
         return connectedTops.size() == size * size;
     }
 
-    private Point getPoint(int xPosition, int yPosition)
-    {
+    private Point getPoint(int xPosition, int yPosition) {
         Point result = rootTopLeft;
         for (int x = 0; x < xPosition; x++) {
             result = result.getRight();
@@ -100,73 +100,84 @@ public class Map {
         return result;
     }
 
-    private boolean createBorder(Point point, String direction){
-        switch (direction){
-            case "left":
-                if (point.isBorderLeft()) {
-                    return false;
-                } else {
-                    point.setBorderLeft(true);
-                    return true;
-                }
-            case "right":
-                if (point.isBorderRight()) {
-                    return false;
-                } else {
-                    point.setBorderRight(true);
-                    return true;
-                }
-            case "top":
-                if (point.isBorderTop()) {
-                    return false;
-                } else {
-                    point.setBorderTop(true);
-                    return true;
-                }
-            case "bottom":
-                if (point.isBorderBottom()) {
-                    return false;
-                } else {
-                    point.setBorderBottom(true);
-                    return true;
-                }
-            default:
-                return false;
+    private void createBorder(Point point, Direction direction) {
+        switch (direction) {
+            case LEFT:
+                point.setBorderLeft(true);
+                break;
+            case RIGHT:
+                point.setBorderRight(true);
+                break;
+            case TOP:
+                point.setBorderTop(true);
+                break;
+            case BOTTOM:
+                point.setBorderBottom(true);
+                break;
         }
     }
 
-    private boolean deleteBorder(Point point, String direction){
-        switch (direction){
-            case "left":
-                if (point.isBorderLeft()) {
-                    return false;
-                } else {
-                    point.setBorderLeft(false);
-                    return true;
+    private void deleteBorder(Point point, Direction direction) {
+        switch (direction) {
+            case LEFT:
+                point.setBorderLeft(false);
+                break;
+            case RIGHT:
+                point.setBorderRight(false);
+                break;
+            case TOP:
+                point.setBorderTop(false);
+                break;
+            case BOTTOM:
+                point.setBorderBottom(false);
+                break;
+        }
+    }
+
+    public void generateBordersEasy() {
+        Random random = new Random();
+        for (int i = 1; i < size; i++) {
+            for (int j = 1; j <= i; j++) {
+                createBorder(getPoint(i, j), Direction.RIGHT);
+                createBorder(getPoint(j, i), Direction.BOTTOM);
+            }
+            int position = random.nextInt(i + 1);
+            boolean isX = random.nextBoolean();
+            if (isX) {
+                deleteBorder(getPoint(position, i), Direction.RIGHT);
+            } else {
+                deleteBorder(getPoint(i, position), Direction.BOTTOM);
+            }
+        }
+    }
+
+    public void generateBorderHard() {
+        Point rowIterator = this.rootTopLeft;
+        int numberOfBorders = (size - 1) * (size - 1);
+        int currentNumberOfBorders = 0;
+        while (rowIterator != null) {
+            Point iterator = rowIterator;
+            while (iterator.getRight() != null) {
+                List<Direction> directions = new ArrayList<>();
+                while (directions.size() < 4) {
+                    Direction direction = Direction.randomDirection(directions);
+                    if (!iterator.isBorderDirection(direction)) {
+                        createBorder(iterator, direction);
+                        if (allTopsAreConnected()) {
+                            currentNumberOfBorders++;
+                            break;
+                        } else {
+                            deleteBorder(iterator, direction);
+                        }
+                    }
+                    directions.add(direction);
                 }
-            case "right":
-                if (point.isBorderRight()) {
-                    return false;
-                } else {
-                    point.setBorderRight(false);
-                    return true;
+                if (currentNumberOfBorders == numberOfBorders) {
+                    return;
                 }
-            case "top":
-                if (point.isBorderTop()) {
-                    return false;
-                } else {
-                    point.setBorderTop(false);
-                    return true;
-                }
-            case "bottom":
-                if (point.isBorderBottom()) {
-                    return false;
-                } else {
-                    point.setBorderBottom(false);
-                    return true;
-                }
-            default:
-                return false;
+                iterator = iterator.getRight();
+            }
+            rowIterator = rowIterator.getBottom();
         }
     }
 

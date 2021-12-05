@@ -1,51 +1,10 @@
 package ua.knu.labyrinth.game;
 
-import java.util.List;
-
 public class Main {
     public static void main() {
         Map.generateMap(10);
-        System.out.println("-----------------tut-----------------");
-        Point c3 = Point.builder().build("c3");
 
-        Point c2 = Point.builder()
-                .right(c3, false)
-                .build("c2");
-
-        Point c1 = Point.builder()
-                .right(c2, true)
-                .build("c1");
-
-        Point b3 = Point.builder()
-                .bottom(c3, true)
-                .build("b3");
-
-        Point b2 = Point.builder()
-                .bottom(c2, false)
-                .right(b3, true)
-                .build("b2");
-
-        Point b1 = Point.builder()
-                .bottom(c1, false)
-                .right(b2, false)
-                .build("b1");
-
-        Point a3 = Point.builder()
-                .bottom(b3, false)
-                .build("a3");
-
-        Point a2 = Point.builder()
-                .bottom(b2, false)
-                .right(a3, false)
-                .build("a2");
-
-        Point a1 = Point.builder()
-                .bottom(b1, true)
-                .right(a2, true)
-                .build("a1");
-
-        Map map = new Map(a1);
-
+        /*
         List<List<Point>> matrix = map.getMatrix();
 
         for (int i = 0; i < matrix.size(); i++) {
@@ -59,7 +18,7 @@ public class Main {
                 }
             }
             System.out.println();
-        }
+        }*/
 
         System.out.println("-----------------tam-----------------");
     }

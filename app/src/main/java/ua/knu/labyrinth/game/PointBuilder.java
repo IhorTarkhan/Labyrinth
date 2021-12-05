@@ -18,7 +18,7 @@ public class PointBuilder {
         return this;
     }
 
-    public Point build(String name) {
-        return new Point(name, null, true, this.rightPoint, this.rightBorder, null, true, this.bottomPoint, this.bottomBorder);
+    public Point build() {
+        return new Point(null, true, this.rightPoint, this.rightBorder, null, true, this.bottomPoint, this.bottomBorder);
     }
 }

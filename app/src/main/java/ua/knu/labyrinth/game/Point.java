@@ -5,17 +5,13 @@ public class Point {
     private Jump rightJump;
     private Jump topJump;
     private Jump bottomJump;
-    private String name;
 
     public Point(
-            String name,
             Point leftPoint, boolean leftBorder,
             Point rightPoint, boolean rightBorder,
             Point topPoint, boolean topBorder,
             Point bottomPoint, boolean bottomBorder
     ) {
-        this.name = name;
-
         Jump leftJump = new Jump(this, leftPoint, leftBorder);
         this.leftJump = leftJump;
         if (leftPoint != null) {
@@ -77,19 +73,40 @@ public class Point {
         return topJump.isBorder;
     }
 
-    public void setBorderLeft(boolean border){
+    public boolean isBorderDirection(Direction direction) {
+        boolean result;
+        switch (direction) {
+            case LEFT:
+                result = isBorderLeft();
+                break;
+            case RIGHT:
+                result = isBorderRight();
+                break;
+            case TOP:
+                result = isBorderTop();
+                break;
+            case BOTTOM:
+                result = isBorderBottom();
+                break;
+            default:
+                result = true;
+        }
+        return result;
+    }
+
+    public void setBorderLeft(boolean border) {
         leftJump.setBorder(border);
     }
 
-    public void setBorderRight(boolean border){
+    public void setBorderRight(boolean border) {
         rightJump.setBorder(border);
     }
 
-    public void setBorderTop(boolean border){
+    public void setBorderTop(boolean border) {
         topJump.setBorder(border);
     }
 
-    public void setBorderBottom(boolean border){
+    public void setBorderBottom(boolean border) {
         bottomJump.setBorder(border);
     }
 }
