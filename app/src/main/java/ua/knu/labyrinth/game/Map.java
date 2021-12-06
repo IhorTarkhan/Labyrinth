@@ -89,7 +89,7 @@ public class Map {
         return connectedTops.size() == size * size;
     }
 
-    private Point getPoint(int xPosition, int yPosition) {
+    public Point getPoint(int xPosition, int yPosition) {
         Point result = rootTopLeft;
         for (int x = 0; x < xPosition; x++) {
             result = result.getRight();
@@ -151,7 +151,7 @@ public class Map {
         }
     }
 
-    public void generateBorderHard() {
+    public void generateBordersHard() {
         Point rowIterator = this.rootTopLeft;
         int numberOfBorders = (size - 1) * (size - 1);
         int currentNumberOfBorders = 0;
@@ -199,10 +199,3 @@ public class Map {
         return result;
     }
 }
-
-/*
-1 5 6 7
-2 4 5 3
-3 3 2 3
-4 3 6 3
-*/
