@@ -10,7 +10,7 @@
         android:id="@+id/button_down"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="64dp"
         android:text="@string/down"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -45,21 +45,20 @@
         app:layout_constraintBottom_toTopOf="@+id/button_down"
         app:layout_constraintEnd_toStartOf="@+id/button_up" />
 
-    <Button
+    <ImageView
         android:id="@+id/ball"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:contentDescription="@string/ball"
+        android:src="@drawable/rad_ball"
+        tools:ignore="MissingConstraints" />
 
-    <View
-        android:id="@+id/myRectangleView"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@drawable/rectangle"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="195dp"
-        tools:layout_editor_absoluteY="97dp" />
+    <TableLayout
+        android:id="@+id/layouttable_set_ships"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:padding="50px"
+        tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -23,8 +23,23 @@ public class FirstFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        view.findViewById(R.id.button_first).setOnClickListener(
-                v -> findNavController(this)
-                        .navigate(R.id.action_FirstFragment_to_SecondFragment));
+        view.findViewById(R.id.button_easy_level).setOnClickListener(
+                v -> {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("level", "easy");
+                    findNavController(this).navigate(R.id.action_FirstFragment_to_SecondFragment, bundle);
+                });
+        view.findViewById(R.id.button_medium_level).setOnClickListener(
+                v -> {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("level", "medium");
+                    findNavController(this).navigate(R.id.action_FirstFragment_to_SecondFragment, bundle);
+                });
+        view.findViewById(R.id.button_hard_level).setOnClickListener(
+                v -> {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("level", "hard");
+                    findNavController(this).navigate(R.id.action_FirstFragment_to_SecondFragment, bundle);
+                });
     }
 }
