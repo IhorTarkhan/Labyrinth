@@ -35,10 +35,21 @@ public class SecondFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         TableLayout tableView = view.findViewById(R.id.layouttable_set_ships);
 
-        System.out.println(getArguments().getString("level"));
+        String level = getArguments().getString("level");
+        System.out.println(level);
 
         Map map = Map.generateMap(10);
-        map.generateBordersHard();
+        switch (level) {
+            case "easy":
+                map.generateBordersEasy();
+                break;
+            case "medium":
+                map.generateBordersEasy(); // ToDo
+                break;
+            case "hard":
+                map.generateBordersHard();
+                break;
+        }
 
         int cellSize = (screenWidth - 100) / map.getMatrix().size();
         for (List<Point> row : map.getMatrix()) {
@@ -70,6 +81,9 @@ public class SecondFragment extends Fragment {
         }
 
         View ball = view.findViewById(R.id.ball);
+        ball.getLayoutParams().height = (int) (cellSize * 0.8) + 50 + (int) (cellSize * 0.1);
+        ball.getLayoutParams().width = (int) (cellSize * 0.8) + 50 + (int) (cellSize * 0.1);
+        ball.setPadding(50 + (int) (cellSize * 0.1), 50 + (int) (cellSize * 0.1), 0, 0);
 
         view.findViewById(R.id.button_down).setOnClickListener(
                 v -> ball.setY(ball.getY() + cellSize));
