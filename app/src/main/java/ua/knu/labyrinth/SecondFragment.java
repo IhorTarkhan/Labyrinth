@@ -1,6 +1,7 @@
 package ua.knu.labyrinth;
 
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
@@ -14,8 +15,11 @@ import android.widget.TableRow;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import ua.knu.labyrinth.databinding.FragmentSecondBinding;
 import ua.knu.labyrinth.game.Map;
@@ -33,13 +37,12 @@ public class SecondFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        TableLayout tableView = view.findViewById(R.id.layouttable_set_ships);
 
-        String level = getArguments().getString("level");
-        System.out.println(level);
+        AtomicInteger ballX = new AtomicInteger();
+        AtomicInteger ballY = new AtomicInteger();
 
-        Map map = Map.generateMap(10);
-        switch (level) {
+        Map map = Map.generateMap(7);
+        switch (getArguments().getString("level")) {
             case "easy":
                 map.generateBordersEasy();
                 break;
@@ -50,8 +53,65 @@ public class SecondFragment extends Fragment {
                 map.generateBordersHard();
                 break;
         }
-
         int cellSize = (screenWidth - 100) / map.getMatrix().size();
+
+        drawMap(view, map);
+
+        View ball = view.findViewById(R.id.ball);
+        ball.getLayoutParams().height = (int) (cellSize * 0.8) + 50 + (int) (cellSize * 0.1);
+        ball.getLayoutParams().width = (int) (cellSize * 0.8) + 50 + (int) (cellSize * 0.1);
+        ball.setPadding(50 + (int) (cellSize * 0.1), 50 + (int) (cellSize * 0.1), 0, 0);
+
+        view.findViewById(R.id.button_down).setOnClickListener(
+                v -> {
+                    if (map.getPoint(ballX.get(), ballY.get()).isBorderBottom()) {
+                        showError(v);
+                    } else {
+                        ball.setY(ball.getY() + cellSize);
+                        ballY.getAndIncrement();
+                    }
+                });
+
+        view.findViewById(R.id.button_up).setOnClickListener(
+                v -> {
+                    if (map.getPoint(ballX.get(), ballY.get()).isBorderTop()) {
+                        showError(v);
+                    } else {
+                        ball.setY(ball.getY() - cellSize);
+                        ballY.getAndDecrement();
+                    }
+                });
+
+        view.findViewById(R.id.button_left).setOnClickListener(
+                v -> {
+                    if (map.getPoint(ballX.get(), ballY.get()).isBorderLeft()) {
+                        showError(v);
+                    } else {
+                        ball.setX(ball.getX() - cellSize);
+                        ballX.getAndDecrement();
+                    }
+                });
+
+        view.findViewById(R.id.button_right).setOnClickListener(
+                v -> {
+                    if (map.getPoint(ballX.get(), ballY.get()).isBorderRight()) {
+                        showError(v);
+                    } else {
+                        ball.setX(ball.getX() + cellSize);
+                        ballX.getAndIncrement();
+                    }
+                });
+    }
+
+    private void showError(View v) {
+        Snackbar snackbar = Snackbar.make(v, R.string.app_name, Snackbar.LENGTH_SHORT);
+        snackbar.getView().setBackgroundColor(Color.RED);
+        snackbar.show();
+    }
+
+    private void drawMap(@NonNull View view, Map map) {
+        int cellSize = (screenWidth - 100) / map.getMatrix().size();
+        TableLayout tableView = view.findViewById(R.id.layouttable_set_ships);
         for (List<Point> row : map.getMatrix()) {
             TableRow tr = new TableRow(getActivity());
             tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
@@ -79,22 +139,5 @@ public class SecondFragment extends Fragment {
             }
             tableView.addView(tr);
         }
-
-        View ball = view.findViewById(R.id.ball);
-        ball.getLayoutParams().height = (int) (cellSize * 0.8) + 50 + (int) (cellSize * 0.1);
-        ball.getLayoutParams().width = (int) (cellSize * 0.8) + 50 + (int) (cellSize * 0.1);
-        ball.setPadding(50 + (int) (cellSize * 0.1), 50 + (int) (cellSize * 0.1), 0, 0);
-
-        view.findViewById(R.id.button_down).setOnClickListener(
-                v -> ball.setY(ball.getY() + cellSize));
-
-        view.findViewById(R.id.button_up).setOnClickListener(
-                v -> ball.setY(ball.getY() - cellSize));
-
-        view.findViewById(R.id.button_left).setOnClickListener(
-                v -> ball.setX(ball.getX() - cellSize));
-
-        view.findViewById(R.id.button_right).setOnClickListener(
-                v -> ball.setX(ball.getX() + cellSize));
     }
 }

@@ -89,7 +89,7 @@ public class Map {
         return connectedTops.size() == size * size;
     }
 
-    private Point getPoint(int xPosition, int yPosition) {
+    public Point getPoint(int xPosition, int yPosition) {
         Point result = rootTopLeft;
         for (int x = 0; x < xPosition; x++) {
             result = result.getRight();
