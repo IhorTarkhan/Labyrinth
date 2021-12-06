@@ -2,14 +2,16 @@
     <string name="app_name">Labyrinth</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
+    <string name="first_fragment_label">Labyrinth</string>
+    <string name="second_fragment_label">Playground</string>
+    <string name="easy_level">Easy Level</string>
+    <string name="medium_level">Medium Level</string>
+    <string name="hard_level">Hard Level</string>
     <string name="down">Down</string>
     <string name="up">Up</string>
     <string name="left">Left</string>
     <string name="right">Right</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_world">Hello world</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>

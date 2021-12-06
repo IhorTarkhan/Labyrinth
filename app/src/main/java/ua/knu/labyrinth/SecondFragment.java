@@ -35,6 +35,8 @@ public class SecondFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         TableLayout tableView = view.findViewById(R.id.layouttable_set_ships);
 
+        System.out.println(getArguments().getString("level"));
+
         Map map = Map.generateMap(10);
         map.generateBordersHard();
 
