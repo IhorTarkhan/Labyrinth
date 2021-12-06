@@ -136,8 +136,8 @@ public class Map {
 
     public void generateBordersEasy() {
         Random random = new Random();
-        for (int i = 1; i < size; i++) {
-            for (int j = 1; j <= i; j++) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j <= i; j++) {
                 createBorder(getPoint(i, j), Direction.RIGHT);
                 createBorder(getPoint(j, i), Direction.BOTTOM);
             }
@@ -155,29 +155,56 @@ public class Map {
         Point rowIterator = this.rootTopLeft;
         int numberOfBorders = (size - 1) * (size - 1);
         int currentNumberOfBorders = 0;
+        Random random = new Random();
         while (rowIterator != null) {
             Point iterator = rowIterator;
-            while (iterator.getRight() != null) {
-                List<Direction> directions = new ArrayList<>();
-                while (directions.size() < 4) {
-                    Direction direction = Direction.randomDirection(directions);
-                    if (!iterator.isBorderDirection(direction)) {
-                        createBorder(iterator, direction);
-                        if (allTopsAreConnected()) {
-                            currentNumberOfBorders++;
-                            break;
-                        } else {
-                            deleteBorder(iterator, direction);
+            if (random.nextInt() % 2 == 1) {
+                while (iterator != null) {
+                    List<Direction> directions = new ArrayList<>();
+                    while (directions.size() < 4) {
+                        Direction direction = Direction.randomDirection(directions);
+                        if (!iterator.isBorderDirection(direction)) {
+                            createBorder(iterator, direction);
+                            if (allTopsAreConnected()) {
+                                currentNumberOfBorders++;
+                                break;
+                            } else {
+                                deleteBorder(iterator, direction);
+                            }
                         }
+                        directions.add(direction);
                     }
-                    directions.add(direction);
+                    if (currentNumberOfBorders == numberOfBorders) {
+                        return;
+                    }
+                    iterator = iterator.getRight();
                 }
-                if (currentNumberOfBorders == numberOfBorders) {
-                    return;
+            } else {
+                while (iterator.getRight() != null) {
+                    iterator = iterator.getRight();
                 }
-                iterator = iterator.getRight();
+                while (iterator != null) {
+                    List<Direction> directions = new ArrayList<>();
+                    while (directions.size() < 4) {
+                        Direction direction = Direction.randomDirection(directions);
+                        if (!iterator.isBorderDirection(direction)) {
+                            createBorder(iterator, direction);
+                            if (allTopsAreConnected()) {
+                                currentNumberOfBorders++;
+                                break;
+                            } else {
+                                deleteBorder(iterator, direction);
+                            }
+                        }
+                        directions.add(direction);
+                    }
+                    if (currentNumberOfBorders == numberOfBorders) {
+                        return;
+                    }
+                    iterator = iterator.getLeft();
+                }
+                rowIterator = rowIterator.getBottom();
             }
-            rowIterator = rowIterator.getBottom();
         }
     }
 
