@@ -136,49 +136,257 @@ public class Map {
 
     public void generateBordersEasy() {
         Random random = new Random();
-        for (int i = 1; i < size; i++) {
-            for (int j = 1; j <= i; j++) {
+        for (int i = 0; i < size - 1; i++) {
+            for (int j = 0; j <= i; j++) {
                 createBorder(getPoint(i, j), Direction.RIGHT);
                 createBorder(getPoint(j, i), Direction.BOTTOM);
             }
             int position = random.nextInt(i + 1);
             boolean isX = random.nextBoolean();
             if (isX) {
-                deleteBorder(getPoint(position, i), Direction.RIGHT);
+                deleteBorder(getPoint(i, position), Direction.RIGHT);
             } else {
-                deleteBorder(getPoint(i, position), Direction.BOTTOM);
+                deleteBorder(getPoint(position, i), Direction.BOTTOM);
             }
         }
     }
 
-    public void generateBordersHard() {
-        Point rowIterator = this.rootTopLeft;
+    private boolean generateBorderSuccess(Point iterator) {
+        List<Direction> directions = new ArrayList<>();
+        while (directions.size() < 4) {
+            Direction direction = Direction.randomDirection(directions);
+            if (!iterator.isBorderDirection(direction)) {
+                createBorder(iterator, direction);
+                if (allTopsAreConnected()) {
+                    return true;
+                } else {
+                    deleteBorder(iterator, direction);
+                }
+            }
+            directions.add(direction);
+        }
+        return false;
+    }
+
+    public void generateBordersMedium() {
+
+        Point leftTopIterator = this.rootTopLeft;
+        Point rightTopIterator = leftTopIterator;
+        while (rightTopIterator.getRight() != null) {
+            rightTopIterator = rightTopIterator.getRight();
+        }
+        Point leftBottomIterator = leftTopIterator;
+        while (leftBottomIterator.getBottom() != null) {
+            leftBottomIterator = leftBottomIterator.getBottom();
+        }
+        Point rightBottomIterator = rightTopIterator;
+        while (rightBottomIterator.getBottom() != null) {
+            rightBottomIterator = rightBottomIterator.getBottom();
+        }
         int numberOfBorders = (size - 1) * (size - 1);
         int currentNumberOfBorders = 0;
-        while (rowIterator != null) {
-            Point iterator = rowIterator;
-            while (iterator.getRight() != null) {
-                List<Direction> directions = new ArrayList<>();
-                while (directions.size() < 4) {
-                    Direction direction = Direction.randomDirection(directions);
-                    if (!iterator.isBorderDirection(direction)) {
-                        createBorder(iterator, direction);
-                        if (allTopsAreConnected()) {
-                            currentNumberOfBorders++;
-                            break;
-                        } else {
-                            deleteBorder(iterator, direction);
-                        }
+        Random random = new Random();
+
+        if (random.nextBoolean()) {
+            Point iterator = leftTopIterator;
+            while (iterator != null) {
+                if (generateBorderSuccess(iterator)) {
+                    currentNumberOfBorders++;
+                    if (currentNumberOfBorders == numberOfBorders) {
+                        return;
                     }
-                    directions.add(direction);
-                }
-                if (currentNumberOfBorders == numberOfBorders) {
-                    return;
                 }
                 iterator = iterator.getRight();
             }
-            rowIterator = rowIterator.getBottom();
+        } else {
+            Point iterator = rightTopIterator;
+            while (iterator != null) {
+                if (generateBorderSuccess(iterator)) {
+                    currentNumberOfBorders++;
+                    if (currentNumberOfBorders == numberOfBorders) {
+                        return;
+                    }
+                }
+                iterator = iterator.getLeft();
+            }
         }
+        if (random.nextBoolean()){
+            Point iterator = leftBottomIterator;
+            while (iterator != null) {
+                if (generateBorderSuccess(iterator)) {
+                    currentNumberOfBorders++;
+                    if (currentNumberOfBorders == numberOfBorders) {
+                        return;
+                    }
+                }
+                iterator = iterator.getRight();
+            }
+        } else {
+            Point iterator = rightBottomIterator;
+            while (iterator != null) {
+                if (generateBorderSuccess(iterator)) {
+                    currentNumberOfBorders++;
+                    if (currentNumberOfBorders == numberOfBorders) {
+                        return;
+                    }
+                }
+                iterator = iterator.getLeft();
+            }
+        }
+        if (random.nextBoolean()){
+            Point iterator = leftTopIterator;
+            while (iterator != null) {
+                if (generateBorderSuccess(iterator)) {
+                    currentNumberOfBorders++;
+                    if (currentNumberOfBorders == numberOfBorders) {
+                        return;
+                    }
+                }
+                iterator = iterator.getBottom();
+            }
+        } else {
+            Point iterator = leftBottomIterator;
+            while (iterator != null) {
+                if (generateBorderSuccess(iterator)) {
+                    currentNumberOfBorders++;
+                    if (currentNumberOfBorders == numberOfBorders) {
+                        return;
+                    }
+                }
+                iterator = iterator.getTop();
+            }
+        }
+        if (random.nextBoolean()){
+            Point iterator = rightTopIterator;
+            while (iterator != null) {
+                if (generateBorderSuccess(iterator)) {
+                    currentNumberOfBorders++;
+                    if (currentNumberOfBorders == numberOfBorders) {
+                        return;
+                    }
+                }
+                iterator = iterator.getBottom();
+            }
+        } else {
+            Point iterator = rightBottomIterator;
+            while (iterator != null) {
+                if (generateBorderSuccess(iterator)) {
+                    currentNumberOfBorders++;
+                    if (currentNumberOfBorders == numberOfBorders) {
+                        return;
+                    }
+                }
+                iterator = iterator.getTop();
+            }
+        }
+
+        Point rowIterator = rootTopLeft.getBottom().getRight();
+        while (rowIterator != null) {
+            Point iterator = rowIterator;
+            if (random.nextBoolean()) {
+                while (iterator != null) {
+                    if (generateBorderSuccess(iterator)) {
+                        currentNumberOfBorders++;
+                        if (currentNumberOfBorders == numberOfBorders) {
+                            return;
+                        }
+                    }
+                    iterator = iterator.getRight();
+                }
+            } else {
+                while (iterator.getRight() != null) {
+                    iterator = iterator.getRight();
+                }
+                while (iterator != null) {
+                    if (generateBorderSuccess(iterator)) {
+                        currentNumberOfBorders++;
+                        if (currentNumberOfBorders == numberOfBorders) {
+                            return;
+                        }
+                    }
+                    iterator = iterator.getLeft();
+                }
+                rowIterator = rowIterator.getBottom();
+            }
+        }
+    }
+
+    public void generateBordersHard(){
+        int numberOfBorders = (size - 1) * (size - 1);
+        int currentNumberOfBorders = 0;
+        int maxFailedCreating = size *size;
+        int failedCreating = 0;
+        Random random = new Random();
+        while (failedCreating < maxFailedCreating){
+            int xPosition = random.nextInt()%size;
+            int yPosition = random.nextInt()%size;
+            Point point = getPoint(xPosition,yPosition);
+            if (generateBorderSuccess(point)){
+                currentNumberOfBorders++;
+                if (currentNumberOfBorders == numberOfBorders) {
+                    return;
+                }
+            }else{
+                failedCreating++;
+            }
+        }
+        if (currentNumberOfBorders < numberOfBorders){
+            generateBordersMedium();
+        }
+    }
+
+    private void findInDepth(Point current, List<Direction> steps){
+        Point left = current.getLeft();
+        Point right = current.getRight();
+        Point bottom = current.getBottom();
+        Point top = current.getTop();
+
+        if (!current.isBorderLeft() && left != null) {
+            steps.add(Direction.LEFT);
+            findInDepth(left, steps);
+            steps.add(Direction.RIGHT);
+        }
+        if (!current.isBorderRight() && right != null) {
+            steps.add(Direction.RIGHT);
+            findInDepth(right, steps);
+            steps.add(Direction.LEFT);
+        }
+        if (!current.isBorderBottom() && bottom != null) {
+            steps.add(Direction.BOTTOM);
+            findInDepth(bottom, steps);
+            steps.add(Direction.TOP);
+        }
+        if (!current.isBorderTop() && top != null) {
+            steps.add(Direction.TOP);
+            findInDepth(top, steps);
+            steps.add(Direction.BOTTOM);
+        }
+    }
+
+    public List<Direction> goToExit(int xPosition, int yPosition){
+        List<Direction> steps = new ArrayList<>();
+        Point player = getPoint(xPosition, yPosition);
+        findInDepth(player, steps);
+        int i = 0;
+        for (; i < steps.size(); i++){
+            switch (steps.get(i)){
+                case TOP:
+                    yPosition++;
+                    break;
+                case BOTTOM:
+                    yPosition--;
+                case LEFT:
+                    xPosition--;
+                    break;
+                case RIGHT:
+                    xPosition++;
+                    break;
+            }
+            if (xPosition == size - 1 && yPosition == size - 1){
+                break;
+            }
+        }
+        return steps.subList(0, i);
     }
 
     public List<List<Point>> getMatrix() {

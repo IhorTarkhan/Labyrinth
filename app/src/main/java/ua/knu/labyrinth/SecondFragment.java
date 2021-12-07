@@ -48,7 +48,7 @@ public class SecondFragment extends Fragment {
                 map.generateBordersEasy();
                 break;
             case "medium":
-                map.generateBordersEasy(); // ToDo
+                map.generateBordersMedium(); // ToDo
                 break;
             case "hard":
                 map.generateBordersHard();
