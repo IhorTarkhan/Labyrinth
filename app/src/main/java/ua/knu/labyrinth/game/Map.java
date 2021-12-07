@@ -401,7 +401,7 @@ public class Map {
                 break;
             }
         }
-        return steps.subList(0, i + 1);
+        return steps.subList(0, i);
     }
 
     public List<List<Point>> getMatrix() {
