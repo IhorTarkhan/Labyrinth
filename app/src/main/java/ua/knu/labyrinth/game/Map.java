@@ -168,7 +168,7 @@ public class Map {
         return false;
     }
 
-    public void generateBordersHard() {
+    public void generateBordersMedium() {
 
         Point leftTopIterator = this.rootTopLeft;
         Point rightTopIterator = leftTopIterator;
@@ -279,27 +279,17 @@ public class Map {
                 iterator = iterator.getTop();
             }
         }
+
         Point rowIterator = rootTopLeft.getBottom().getRight();
         while (rowIterator != null) {
             Point iterator = rowIterator;
             if (random.nextBoolean()) {
                 while (iterator != null) {
-                    List<Direction> directions = new ArrayList<>();
-                    while (directions.size() < 4) {
-                        Direction direction = Direction.randomDirection(directions);
-                        if (!iterator.isBorderDirection(direction)) {
-                            createBorder(iterator, direction);
-                            if (allTopsAreConnected()) {
-                                currentNumberOfBorders++;
-                                break;
-                            } else {
-                                deleteBorder(iterator, direction);
-                            }
+                    if (generateBorderSuccess(iterator)) {
+                        currentNumberOfBorders++;
+                        if (currentNumberOfBorders == numberOfBorders) {
+                            return;
                         }
-                        directions.add(direction);
-                    }
-                    if (currentNumberOfBorders == numberOfBorders) {
-                        return;
                     }
                     iterator = iterator.getRight();
                 }
@@ -308,27 +298,40 @@ public class Map {
                     iterator = iterator.getRight();
                 }
                 while (iterator != null) {
-                    List<Direction> directions = new ArrayList<>();
-                    while (directions.size() < 4) {
-                        Direction direction = Direction.randomDirection(directions);
-                        if (!iterator.isBorderDirection(direction)) {
-                            createBorder(iterator, direction);
-                            if (allTopsAreConnected()) {
-                                currentNumberOfBorders++;
-                                break;
-                            } else {
-                                deleteBorder(iterator, direction);
-                            }
+                    if (generateBorderSuccess(iterator)) {
+                        currentNumberOfBorders++;
+                        if (currentNumberOfBorders == numberOfBorders) {
+                            return;
                         }
-                        directions.add(direction);
-                    }
-                    if (currentNumberOfBorders == numberOfBorders) {
-                        return;
                     }
                     iterator = iterator.getLeft();
                 }
                 rowIterator = rowIterator.getBottom();
             }
+        }
+    }
+
+    public void generateBordersHard(){
+        int numberOfBorders = (size - 1) * (size - 1);
+        int currentNumberOfBorders = 0;
+        int maxFailedCreating = size *size;
+        int failedCreating = 0;
+        Random random = new Random();
+        while (failedCreating < maxFailedCreating){
+            int xPosition = random.nextInt()%size;
+            int yPosition = random.nextInt()%size;
+            Point point = getPoint(xPosition,yPosition);
+            if (generateBorderSuccess(point)){
+                currentNumberOfBorders++;
+                if (currentNumberOfBorders == numberOfBorders) {
+                    return;
+                }
+            }else{
+                failedCreating++;
+            }
+        }
+        if (currentNumberOfBorders < numberOfBorders){
+            generateBordersMedium();
         }
     }
 
