@@ -2,6 +2,7 @@ package ua.knu.labyrinth;
 
 import static androidx.navigation.fragment.NavHostFragment.findNavController;
 
+import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -35,6 +37,7 @@ public class SecondFragment extends Fragment {
         return FragmentSecondBinding.inflate(inflater, container, false).getRoot();
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -49,7 +52,7 @@ public class SecondFragment extends Fragment {
                 map.generateBordersEasy();
                 break;
             case "medium":
-                map.generateBordersMedium(); // ToDo
+                map.generateBordersMedium();
                 break;
             case "hard":
                 map.generateBordersHard();
@@ -98,6 +101,7 @@ public class SecondFragment extends Fragment {
                 ball.setY(ball.getY() + cellSize);
                 ballY.getAndIncrement();
                 steps.getAndIncrement();
+                view.<TextView>findViewById(R.id.steps).setText("Steps: " + steps.get());
             }
         });
         view.findViewById(R.id.button_up).setOnClickListener(v -> {
@@ -110,6 +114,7 @@ public class SecondFragment extends Fragment {
                 ball.setY(ball.getY() - cellSize);
                 ballY.getAndDecrement();
                 steps.getAndIncrement();
+                view.<TextView>findViewById(R.id.steps).setText("Steps: " + steps.get());
             }
         });
         view.findViewById(R.id.button_left).setOnClickListener(v -> {
@@ -122,6 +127,7 @@ public class SecondFragment extends Fragment {
                 ball.setX(ball.getX() - cellSize);
                 ballX.getAndDecrement();
                 steps.getAndIncrement();
+                view.<TextView>findViewById(R.id.steps).setText("Steps: " + steps.get());
             }
         });
         view.findViewById(R.id.button_right).setOnClickListener(v -> {
@@ -134,6 +140,7 @@ public class SecondFragment extends Fragment {
                 ball.setX(ball.getX() + cellSize);
                 ballX.getAndIncrement();
                 steps.getAndIncrement();
+                view.<TextView>findViewById(R.id.steps).setText("Steps: " + steps.get());
             }
         });
     }
@@ -152,6 +159,7 @@ public class SecondFragment extends Fragment {
         snackbar.show();
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void drawMap(@NonNull View view, Map map) {
         int cellSize = (screenWidth - 100) / map.getMatrix().size();
         TableLayout tableView = view.findViewById(R.id.layouttable_set_ships);
