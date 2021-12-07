@@ -43,7 +43,7 @@ public class SecondFragment extends Fragment {
         AtomicInteger ballY = new AtomicInteger();
         AtomicInteger steps = new AtomicInteger();
 
-        Map map = Map.generateMap(7);
+        Map map = Map.generateMap(4);
         switch (getArguments().getString("level")) {
             case "easy":
                 map.generateBordersEasy();
@@ -64,6 +64,30 @@ public class SecondFragment extends Fragment {
         ball.getLayoutParams().width = (int) (cellSize * 0.8) + 50 + (int) (cellSize * 0.1);
         ball.setPadding(50 + (int) (cellSize * 0.1), 50 + (int) (cellSize * 0.1), 0, 0);
 
+        view.findViewById(R.id.button_help).setOnClickListener(v -> {
+            map.goToExit(ballX.get(), ballY.get())
+                    .forEach(d -> {
+                        switch (d) {
+                            case LEFT:
+                                ball.setX(ball.getX() - cellSize);
+                                break;
+                            case RIGHT:
+                                ball.setX(ball.getX() + cellSize);
+                                break;
+                            case BOTTOM:
+                                ball.setY(ball.getY() - cellSize);
+                                break;
+                            case TOP:
+                                ball.setY(ball.getY() + cellSize);
+                                break;
+                        }
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    });
+        });
         view.findViewById(R.id.button_down).setOnClickListener(v -> {
             if (map.getPoint(ballX.get(), ballY.get()).isBorderBottom()) {
                 showError(v);
@@ -115,8 +139,8 @@ public class SecondFragment extends Fragment {
     }
 
     private void win(View v, int steps) {
-        Snackbar snackbar = Snackbar.make(v, "Win in " + steps + " steps", Snackbar.LENGTH_SHORT);
-        snackbar.getView().setBackgroundColor(Color.rgb(76, 175,80));
+        Snackbar snackbar = Snackbar.make(v, "Win in " + ++steps + " steps", Snackbar.LENGTH_SHORT);
+        snackbar.getView().setBackgroundColor(Color.rgb(76, 175, 80));
         snackbar.show();
         findNavController(this).navigate(R.id.action_SecondFragment_to_FirstFragment);
 
