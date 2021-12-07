@@ -62,45 +62,38 @@ public class SecondFragment extends Fragment {
         ball.getLayoutParams().width = (int) (cellSize * 0.8) + 50 + (int) (cellSize * 0.1);
         ball.setPadding(50 + (int) (cellSize * 0.1), 50 + (int) (cellSize * 0.1), 0, 0);
 
-        view.findViewById(R.id.button_down).setOnClickListener(
-                v -> {
-                    if (map.getPoint(ballX.get(), ballY.get()).isBorderBottom()) {
-                        showError(v);
-                    } else {
-                        ball.setY(ball.getY() + cellSize);
-                        ballY.getAndIncrement();
-                    }
-                });
-
-        view.findViewById(R.id.button_up).setOnClickListener(
-                v -> {
-                    if (map.getPoint(ballX.get(), ballY.get()).isBorderTop()) {
-                        showError(v);
-                    } else {
-                        ball.setY(ball.getY() - cellSize);
-                        ballY.getAndDecrement();
-                    }
-                });
-
-        view.findViewById(R.id.button_left).setOnClickListener(
-                v -> {
-                    if (map.getPoint(ballX.get(), ballY.get()).isBorderLeft()) {
-                        showError(v);
-                    } else {
-                        ball.setX(ball.getX() - cellSize);
-                        ballX.getAndDecrement();
-                    }
-                });
-
-        view.findViewById(R.id.button_right).setOnClickListener(
-                v -> {
-                    if (map.getPoint(ballX.get(), ballY.get()).isBorderRight()) {
-                        showError(v);
-                    } else {
-                        ball.setX(ball.getX() + cellSize);
-                        ballX.getAndIncrement();
-                    }
-                });
+        view.findViewById(R.id.button_down).setOnClickListener(v -> {
+            if (map.getPoint(ballX.get(), ballY.get()).isBorderBottom()) {
+                showError(v);
+            } else {
+                ball.setY(ball.getY() + cellSize);
+                ballY.getAndIncrement();
+            }
+        });
+        view.findViewById(R.id.button_up).setOnClickListener(v -> {
+            if (map.getPoint(ballX.get(), ballY.get()).isBorderTop()) {
+                showError(v);
+            } else {
+                ball.setY(ball.getY() - cellSize);
+                ballY.getAndDecrement();
+            }
+        });
+        view.findViewById(R.id.button_left).setOnClickListener(v -> {
+            if (map.getPoint(ballX.get(), ballY.get()).isBorderLeft()) {
+                showError(v);
+            } else {
+                ball.setX(ball.getX() - cellSize);
+                ballX.getAndDecrement();
+            }
+        });
+        view.findViewById(R.id.button_right).setOnClickListener(v -> {
+            if (map.getPoint(ballX.get(), ballY.get()).isBorderRight()) {
+                showError(v);
+            } else {
+                ball.setX(ball.getX() + cellSize);
+                ballX.getAndIncrement();
+            }
+        });
     }
 
     private void showError(View v) {
