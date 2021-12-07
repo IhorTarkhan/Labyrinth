@@ -341,14 +341,6 @@ public class Map {
         Point bottom = current.getBottom();
         Point top = current.getTop();
 
-        if (!current.isBorderLeft() && left != null) {
-            if (!visited.contains(left)) {
-                visited.add(left);
-                steps.add(Direction.LEFT);
-                findInDepth(left, steps, visited);
-                steps.add(Direction.RIGHT);
-            }
-        }
         if (!current.isBorderRight() && right != null) {
             if (!visited.contains(right)) {
                 visited.add(right);
@@ -363,6 +355,14 @@ public class Map {
                 steps.add(Direction.BOTTOM);
                 findInDepth(bottom, steps, visited);
                 steps.add(Direction.TOP);
+            }
+        }
+        if (!current.isBorderLeft() && left != null) {
+            if (!visited.contains(left)) {
+                visited.add(left);
+                steps.add(Direction.LEFT);
+                findInDepth(left, steps, visited);
+                steps.add(Direction.RIGHT);
             }
         }
         if (!current.isBorderTop() && top != null) {
