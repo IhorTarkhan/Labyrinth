@@ -41,6 +41,7 @@ public class SecondFragment extends Fragment {
 
         AtomicInteger ballX = new AtomicInteger();
         AtomicInteger ballY = new AtomicInteger();
+        AtomicInteger steps = new AtomicInteger();
 
         Map map = Map.generateMap(7);
         switch (getArguments().getString("level")) {
@@ -68,10 +69,11 @@ public class SecondFragment extends Fragment {
                 showError(v);
             } else if (ballX.get() == map.getMatrix().size() - 1
                     && ballY.get() + 1 == map.getMatrix().size() - 1) {
-                win(v);
+                win(v, steps.get());
             } else {
                 ball.setY(ball.getY() + cellSize);
                 ballY.getAndIncrement();
+                steps.getAndIncrement();
             }
         });
         view.findViewById(R.id.button_up).setOnClickListener(v -> {
@@ -79,10 +81,11 @@ public class SecondFragment extends Fragment {
                 showError(v);
             } else if (ballX.get() == map.getMatrix().size() - 1
                     && ballY.get() - 1 == map.getMatrix().size() - 1) {
-                win(v);
+                win(v, steps.get());
             } else {
                 ball.setY(ball.getY() - cellSize);
                 ballY.getAndDecrement();
+                steps.getAndIncrement();
             }
         });
         view.findViewById(R.id.button_left).setOnClickListener(v -> {
@@ -90,10 +93,11 @@ public class SecondFragment extends Fragment {
                 showError(v);
             } else if (ballX.get() - 1 == map.getMatrix().size() - 1
                     && ballY.get() == map.getMatrix().size() - 1) {
-                win(v);
+                win(v, steps.get());
             } else {
                 ball.setX(ball.getX() - cellSize);
                 ballX.getAndDecrement();
+                steps.getAndIncrement();
             }
         });
         view.findViewById(R.id.button_right).setOnClickListener(v -> {
@@ -101,17 +105,18 @@ public class SecondFragment extends Fragment {
                 showError(v);
             } else if (ballX.get() + 1 == map.getMatrix().size() - 1
                     && ballY.get() == map.getMatrix().size() - 1) {
-                win(v);
+                win(v, steps.get());
             } else {
                 ball.setX(ball.getX() + cellSize);
                 ballX.getAndIncrement();
+                steps.getAndIncrement();
             }
         });
     }
 
-    private void win(View v) {
-        Snackbar snackbar = Snackbar.make(v, "Win with steps count: " + 5, Snackbar.LENGTH_SHORT);
-        snackbar.getView().setBackgroundColor(Color.GREEN);
+    private void win(View v, int steps) {
+        Snackbar snackbar = Snackbar.make(v, "Win in " + steps + " steps", Snackbar.LENGTH_SHORT);
+        snackbar.getView().setBackgroundColor(Color.rgb(76, 175,80));
         snackbar.show();
         findNavController(this).navigate(R.id.action_SecondFragment_to_FirstFragment);
 
