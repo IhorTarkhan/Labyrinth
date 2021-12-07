@@ -335,6 +335,34 @@ public class Map {
         }
     }
 
+    public void findInDepth(Point current, List<Direction> steps){
+        Point left = current.getLeft();
+        Point right = current.getRight();
+        Point bottom = current.getBottom();
+        Point top = current.getTop();
+
+        if (!current.isBorderLeft() && left != null) {
+            steps.add(Direction.LEFT);
+            findInDepth(left, steps);
+            steps.add(Direction.RIGHT);
+        }
+        if (!current.isBorderRight() && right != null) {
+            steps.add(Direction.RIGHT);
+            findInDepth(right, steps);
+            steps.add(Direction.LEFT);
+        }
+        if (!current.isBorderBottom() && bottom != null) {
+            steps.add(Direction.BOTTOM);
+            findInDepth(bottom, steps);
+            steps.add(Direction.TOP);
+        }
+        if (!current.isBorderTop() && top != null) {
+            steps.add(Direction.TOP);
+            findInDepth(top, steps);
+            steps.add(Direction.BOTTOM);
+        }
+    }
+
     public List<List<Point>> getMatrix() {
         List<List<Point>> result = new ArrayList<>();
 
