@@ -210,7 +210,7 @@ public class Map {
                 iterator = iterator.getLeft();
             }
         }
-        if (random.nextBoolean()){
+        if (random.nextBoolean()) {
             Point iterator = leftBottomIterator;
             while (iterator != null) {
                 if (generateBorderSuccess(iterator)) {
@@ -233,7 +233,7 @@ public class Map {
                 iterator = iterator.getLeft();
             }
         }
-        if (random.nextBoolean()){
+        if (random.nextBoolean()) {
             Point iterator = leftTopIterator;
             while (iterator != null) {
                 if (generateBorderSuccess(iterator)) {
@@ -256,7 +256,7 @@ public class Map {
                 iterator = iterator.getTop();
             }
         }
-        if (random.nextBoolean()){
+        if (random.nextBoolean()) {
             Point iterator = rightTopIterator;
             while (iterator != null) {
                 if (generateBorderSuccess(iterator)) {
@@ -311,31 +311,31 @@ public class Map {
         }
     }
 
-    public void generateBordersHard(){
+    public void generateBordersHard() {
         int numberOfBorders = (size - 1) * (size - 1);
         int currentNumberOfBorders = 0;
-        int maxFailedCreating = size *size;
+        int maxFailedCreating = size * size;
         int failedCreating = 0;
         Random random = new Random();
-        while (failedCreating < maxFailedCreating){
-            int xPosition = random.nextInt()%size;
-            int yPosition = random.nextInt()%size;
-            Point point = getPoint(xPosition,yPosition);
-            if (generateBorderSuccess(point)){
+        while (failedCreating < maxFailedCreating) {
+            int xPosition = random.nextInt() % size;
+            int yPosition = random.nextInt() % size;
+            Point point = getPoint(xPosition, yPosition);
+            if (generateBorderSuccess(point)) {
                 currentNumberOfBorders++;
                 if (currentNumberOfBorders == numberOfBorders) {
                     return;
                 }
-            }else{
+            } else {
                 failedCreating++;
             }
         }
-        if (currentNumberOfBorders < numberOfBorders){
+        if (currentNumberOfBorders < numberOfBorders) {
             generateBordersMedium();
         }
     }
 
-    private void findInDepth(Point current, List<Direction> steps, List<Point> visited){
+    private void findInDepth(Point current, List<Direction> steps, List<Point> visited) {
         Point left = current.getLeft();
         Point right = current.getRight();
         Point bottom = current.getBottom();
@@ -375,15 +375,15 @@ public class Map {
         }
     }
 
-    public List<Direction> goToExit(int xPosition, int yPosition){
+    public List<Direction> goToExit(int xPosition, int yPosition) {
         List<Direction> steps = new ArrayList<>();
         List<Point> visited = new ArrayList<>();
         Point player = getPoint(xPosition, yPosition);
         visited.add(player);
         findInDepth(player, steps, visited);
         int i = 0;
-        for (; i < steps.size(); i++){
-            switch (steps.get(i)){
+        for (; i < steps.size(); i++) {
+            switch (steps.get(i)) {
                 case TOP:
                     yPosition--;
                     break;
@@ -397,11 +397,27 @@ public class Map {
                     xPosition++;
                     break;
             }
-            if (xPosition == size - 1 && yPosition == size - 1){
+            if (xPosition == size - 1 && yPosition == size - 1) {
                 break;
             }
         }
-        return steps.subList(0, i);
+        List<Direction> way = steps.subList(0, i);
+        for (int j = 1; j < way.size(); j++) {
+            if ((way.get(j) == Direction.BOTTOM && way.get(j - 1) == Direction.TOP) ||
+                    (way.get(j) == Direction.TOP && way.get(j - 1) == Direction.BOTTOM) ||
+                    (way.get(j) == Direction.RIGHT && way.get(j - 1) == Direction.LEFT) ||
+                    (way.get(j) == Direction.LEFT && way.get(j - 1) == Direction.RIGHT)) {
+                way.remove(j);
+                way.remove(j - 1);
+                if (j > 1) {
+                    j--;
+                }
+                if (j > 1) {
+                    j--;
+                }
+            }
+        }
+        return way;
     }
 
     public List<List<Point>> getMatrix() {
