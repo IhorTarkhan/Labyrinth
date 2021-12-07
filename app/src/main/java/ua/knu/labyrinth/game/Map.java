@@ -335,7 +335,7 @@ public class Map {
         }
     }
 
-    public void findInDepth(Point current, List<Direction> steps){
+    private void findInDepth(Point current, List<Direction> steps){
         Point left = current.getLeft();
         Point right = current.getRight();
         Point bottom = current.getBottom();
@@ -361,6 +361,32 @@ public class Map {
             findInDepth(top, steps);
             steps.add(Direction.BOTTOM);
         }
+    }
+
+    public List<Direction> goToExit(int xPosition, int yPosition){
+        List<Direction> steps = new ArrayList<>();
+        Point player = getPoint(xPosition, yPosition);
+        findInDepth(player, steps);
+        int i = 0;
+        for (; i < steps.size(); i++){
+            switch (steps.get(i)){
+                case TOP:
+                    yPosition++;
+                    break;
+                case BOTTOM:
+                    yPosition--;
+                case LEFT:
+                    xPosition--;
+                    break;
+                case RIGHT:
+                    xPosition++;
+                    break;
+            }
+            if (xPosition == size - 1 && yPosition == size - 1){
+                break;
+            }
+        }
+        return steps.subList(0, i);
     }
 
     public List<List<Point>> getMatrix() {
