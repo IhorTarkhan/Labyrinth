@@ -16,6 +16,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
@@ -72,7 +73,13 @@ public class SecondFragment extends Fragment {
         TextView stepsText = view.findViewById(R.id.steps);
 
         view.findViewById(R.id.button_help).setOnClickListener(v -> {
+            view.findViewById(R.id.button_down).setVisibility(View.GONE);
             new Thread(() -> {
+                float downX = hideButton(view, R.id.button_down);
+                float upX = hideButton(view, R.id.button_up);
+                float leftX = hideButton(view, R.id.button_left);
+                float rightX = hideButton(view, R.id.button_right);
+                float helpX = hideButton(view, R.id.button_help);
                 map.goToExit(ballX.get(), ballY.get())
                         .forEach(d -> {
                             switch (d) {
@@ -100,10 +107,16 @@ public class SecondFragment extends Fragment {
                                 e.printStackTrace();
                             }
                         });
+                showButton(view, R.id.button_down, downX);
+                showButton(view, R.id.button_up, upX);
+                showButton(view, R.id.button_left, leftX);
+                showButton(view, R.id.button_right, rightX);
+                showButton(view, R.id.button_help, helpX);
                 Snackbar snackbar = Snackbar.make(v, "Helped", Snackbar.LENGTH_SHORT);
                 snackbar.getView().setBackgroundColor(Color.rgb(205, 220, 57));
                 snackbar.show();
             }).start();
+            view.findViewById(R.id.button_down).setVisibility(View.VISIBLE);
             stepsText.setText("Steps: " + (steps.get() + map.goToExit(ballX.get(), ballY.get()).size()));
         });
         view.findViewById(R.id.button_down).setOnClickListener(v -> {
@@ -158,6 +171,18 @@ public class SecondFragment extends Fragment {
                 stepsText.setText("Steps: " + steps.get());
             }
         });
+    }
+
+    private void showButton(View view, @IdRes int id, float originX) {
+        View viewById = view.findViewById(id);
+        viewById.setX(originX);
+    }
+
+    private float hideButton(@NonNull View view, @IdRes int id) {
+        View viewById = view.findViewById(id);
+        float originX = viewById.getX();
+        viewById.setX(-1000);
+        return originX;
     }
 
     private void win(View v, int steps) {
