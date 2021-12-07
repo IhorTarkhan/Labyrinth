@@ -350,24 +350,24 @@ public class Map {
             }
         }
         if (!current.isBorderRight() && right != null) {
-            if (!visited.contains(left)) {
-                visited.add(left);
+            if (!visited.contains(right)) {
+                visited.add(right);
                 steps.add(Direction.RIGHT);
                 findInDepth(right, steps, visited);
                 steps.add(Direction.LEFT);
             }
         }
         if (!current.isBorderBottom() && bottom != null) {
-            if (!visited.contains(left)) {
-                visited.add(left);
+            if (!visited.contains(bottom)) {
+                visited.add(bottom);
                 steps.add(Direction.BOTTOM);
                 findInDepth(bottom, steps, visited);
                 steps.add(Direction.TOP);
             }
         }
         if (!current.isBorderTop() && top != null) {
-            if (!visited.contains(left)) {
-                visited.add(left);
+            if (!visited.contains(top)) {
+                visited.add(top);
                 steps.add(Direction.TOP);
                 findInDepth(top, steps, visited);
                 steps.add(Direction.BOTTOM);
@@ -385,10 +385,11 @@ public class Map {
         for (; i < steps.size(); i++){
             switch (steps.get(i)){
                 case TOP:
-                    yPosition++;
+                    yPosition--;
                     break;
                 case BOTTOM:
-                    yPosition--;
+                    yPosition++;
+                    break;
                 case LEFT:
                     xPosition--;
                     break;
@@ -400,7 +401,7 @@ public class Map {
                 break;
             }
         }
-        return steps.subList(0, i);
+        return steps.subList(0, i + 1);
     }
 
     public List<List<Point>> getMatrix() {
