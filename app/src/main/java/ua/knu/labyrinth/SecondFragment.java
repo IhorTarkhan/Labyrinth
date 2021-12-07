@@ -2,6 +2,7 @@ package ua.knu.labyrinth;
 
 import static androidx.navigation.fragment.NavHostFragment.findNavController;
 
+import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -35,6 +37,7 @@ public class SecondFragment extends Fragment {
         return FragmentSecondBinding.inflate(inflater, container, false).getRoot();
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -43,13 +46,16 @@ public class SecondFragment extends Fragment {
         AtomicInteger ballY = new AtomicInteger();
         AtomicInteger steps = new AtomicInteger();
 
-        Map map = Map.generateMap(4);
+
+        int size = Integer.parseInt(getArguments().getString("size"));
+
+        Map map = Map.generateMap(size);
         switch (getArguments().getString("level")) {
             case "easy":
                 map.generateBordersEasy();
                 break;
             case "medium":
-                map.generateBordersMedium(); // ToDo
+                map.generateBordersMedium();
                 break;
             case "hard":
                 map.generateBordersHard();
@@ -63,30 +69,42 @@ public class SecondFragment extends Fragment {
         ball.getLayoutParams().height = (int) (cellSize * 0.8) + 50 + (int) (cellSize * 0.1);
         ball.getLayoutParams().width = (int) (cellSize * 0.8) + 50 + (int) (cellSize * 0.1);
         ball.setPadding(50 + (int) (cellSize * 0.1), 50 + (int) (cellSize * 0.1), 0, 0);
+        TextView stepsText = view.findViewById(R.id.steps);
 
         view.findViewById(R.id.button_help).setOnClickListener(v -> {
-            map.goToExit(ballX.get(), ballY.get())
-                    .forEach(d -> {
-                        switch (d) {
-                            case LEFT:
-                                ball.setX(ball.getX() - cellSize);
-                                break;
-                            case RIGHT:
-                                ball.setX(ball.getX() + cellSize);
-                                break;
-                            case BOTTOM:
-                                ball.setY(ball.getY() - cellSize);
-                                break;
-                            case TOP:
-                                ball.setY(ball.getY() + cellSize);
-                                break;
-                        }
-                        try {
-                            Thread.sleep(100);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    });
+            new Thread(() -> {
+                map.goToExit(ballX.get(), ballY.get())
+                        .forEach(d -> {
+                            switch (d) {
+                                case LEFT:
+                                    ball.setX(ball.getX() - cellSize);
+                                    ballX.getAndDecrement();
+                                    break;
+                                case RIGHT:
+                                    ball.setX(ball.getX() + cellSize);
+                                    ballX.getAndIncrement();
+                                    break;
+                                case BOTTOM:
+                                    ball.setY(ball.getY() + cellSize);
+                                    ballY.getAndIncrement();
+                                    break;
+                                case TOP:
+                                    ball.setY(ball.getY() - cellSize);
+                                    ballY.getAndDecrement();
+                                    break;
+                            }
+                            steps.getAndIncrement();
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                Snackbar snackbar = Snackbar.make(v, "Helped", Snackbar.LENGTH_SHORT);
+                snackbar.getView().setBackgroundColor(Color.rgb(205, 220, 57));
+                snackbar.show();
+            }).start();
+            stepsText.setText("Steps: " + (steps.get() + map.goToExit(ballX.get(), ballY.get()).size()));
         });
         view.findViewById(R.id.button_down).setOnClickListener(v -> {
             if (map.getPoint(ballX.get(), ballY.get()).isBorderBottom()) {
@@ -98,6 +116,7 @@ public class SecondFragment extends Fragment {
                 ball.setY(ball.getY() + cellSize);
                 ballY.getAndIncrement();
                 steps.getAndIncrement();
+                stepsText.setText("Steps: " + steps.get());
             }
         });
         view.findViewById(R.id.button_up).setOnClickListener(v -> {
@@ -110,6 +129,7 @@ public class SecondFragment extends Fragment {
                 ball.setY(ball.getY() - cellSize);
                 ballY.getAndDecrement();
                 steps.getAndIncrement();
+                stepsText.setText("Steps: " + steps.get());
             }
         });
         view.findViewById(R.id.button_left).setOnClickListener(v -> {
@@ -122,6 +142,7 @@ public class SecondFragment extends Fragment {
                 ball.setX(ball.getX() - cellSize);
                 ballX.getAndDecrement();
                 steps.getAndIncrement();
+                stepsText.setText("Steps: " + steps.get());
             }
         });
         view.findViewById(R.id.button_right).setOnClickListener(v -> {
@@ -134,6 +155,7 @@ public class SecondFragment extends Fragment {
                 ball.setX(ball.getX() + cellSize);
                 ballX.getAndIncrement();
                 steps.getAndIncrement();
+                stepsText.setText("Steps: " + steps.get());
             }
         });
     }
@@ -152,6 +174,7 @@ public class SecondFragment extends Fragment {
         snackbar.show();
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void drawMap(@NonNull View view, Map map) {
         int cellSize = (screenWidth - 100) / map.getMatrix().size();
         TableLayout tableView = view.findViewById(R.id.layouttable_set_ships);
