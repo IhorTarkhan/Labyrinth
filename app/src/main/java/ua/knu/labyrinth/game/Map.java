@@ -136,7 +136,7 @@ public class Map {
 
     public void generateBordersEasy() {
         Random random = new Random();
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size - 1; i++) {
             for (int j = 0; j <= i; j++) {
                 createBorder(getPoint(i, j), Direction.RIGHT);
                 createBorder(getPoint(j, i), Direction.BOTTOM);
@@ -144,21 +144,145 @@ public class Map {
             int position = random.nextInt(i + 1);
             boolean isX = random.nextBoolean();
             if (isX) {
-                deleteBorder(getPoint(position, i), Direction.RIGHT);
+                deleteBorder(getPoint(i, position), Direction.RIGHT);
             } else {
-                deleteBorder(getPoint(i, position), Direction.BOTTOM);
+                deleteBorder(getPoint(position, i), Direction.BOTTOM);
             }
         }
     }
 
+    private boolean generateBorderSuccess(Point iterator) {
+        List<Direction> directions = new ArrayList<>();
+        while (directions.size() < 4) {
+            Direction direction = Direction.randomDirection(directions);
+            if (!iterator.isBorderDirection(direction)) {
+                createBorder(iterator, direction);
+                if (allTopsAreConnected()) {
+                    return true;
+                } else {
+                    deleteBorder(iterator, direction);
+                }
+            }
+            directions.add(direction);
+        }
+        return false;
+    }
+
     public void generateBordersHard() {
-        Point rowIterator = this.rootTopLeft;
+
+        Point leftTopIterator = this.rootTopLeft;
+        Point rightTopIterator = leftTopIterator;
+        while (rightTopIterator.getRight() != null) {
+            rightTopIterator = rightTopIterator.getRight();
+        }
+        Point leftBottomIterator = leftTopIterator;
+        while (leftBottomIterator.getBottom() != null) {
+            leftBottomIterator = leftBottomIterator.getBottom();
+        }
+        Point rightBottomIterator = rightTopIterator;
+        while (rightBottomIterator.getBottom() != null) {
+            rightBottomIterator = rightBottomIterator.getBottom();
+        }
         int numberOfBorders = (size - 1) * (size - 1);
         int currentNumberOfBorders = 0;
         Random random = new Random();
+
+        if (random.nextBoolean()) {
+            Point iterator = leftTopIterator;
+            while (iterator != null) {
+                if (generateBorderSuccess(iterator)) {
+                    currentNumberOfBorders++;
+                    if (currentNumberOfBorders == numberOfBorders) {
+                        return;
+                    }
+                }
+                iterator = iterator.getRight();
+            }
+        } else {
+            Point iterator = rightTopIterator;
+            while (iterator != null) {
+                if (generateBorderSuccess(iterator)) {
+                    currentNumberOfBorders++;
+                    if (currentNumberOfBorders == numberOfBorders) {
+                        return;
+                    }
+                }
+                iterator = iterator.getLeft();
+            }
+        }
+        if (random.nextBoolean()){
+            Point iterator = leftBottomIterator;
+            while (iterator != null) {
+                if (generateBorderSuccess(iterator)) {
+                    currentNumberOfBorders++;
+                    if (currentNumberOfBorders == numberOfBorders) {
+                        return;
+                    }
+                }
+                iterator = iterator.getRight();
+            }
+        } else {
+            Point iterator = rightBottomIterator;
+            while (iterator != null) {
+                if (generateBorderSuccess(iterator)) {
+                    currentNumberOfBorders++;
+                    if (currentNumberOfBorders == numberOfBorders) {
+                        return;
+                    }
+                }
+                iterator = iterator.getLeft();
+            }
+        }
+        if (random.nextBoolean()){
+            Point iterator = leftTopIterator;
+            while (iterator != null) {
+                if (generateBorderSuccess(iterator)) {
+                    currentNumberOfBorders++;
+                    if (currentNumberOfBorders == numberOfBorders) {
+                        return;
+                    }
+                }
+                iterator = iterator.getBottom();
+            }
+        } else {
+            Point iterator = leftBottomIterator;
+            while (iterator != null) {
+                if (generateBorderSuccess(iterator)) {
+                    currentNumberOfBorders++;
+                    if (currentNumberOfBorders == numberOfBorders) {
+                        return;
+                    }
+                }
+                iterator = iterator.getTop();
+            }
+        }
+        if (random.nextBoolean()){
+            Point iterator = rightTopIterator;
+            while (iterator != null) {
+                if (generateBorderSuccess(iterator)) {
+                    currentNumberOfBorders++;
+                    if (currentNumberOfBorders == numberOfBorders) {
+                        return;
+                    }
+                }
+                iterator = iterator.getBottom();
+            }
+        } else {
+            Point iterator = rightBottomIterator;
+            while (iterator != null) {
+                if (generateBorderSuccess(iterator)) {
+                    currentNumberOfBorders++;
+                    if (currentNumberOfBorders == numberOfBorders) {
+                        return;
+                    }
+                }
+                iterator = iterator.getTop();
+            }
+        }
+        Point rowIterator = rootTopLeft.getBottom().getRight();
         while (rowIterator != null) {
             Point iterator = rowIterator;
-            if (random.nextInt() % 2 == 1) {
+            if (random.nextBoolean()) {
                 while (iterator != null) {
                     List<Direction> directions = new ArrayList<>();
                     while (directions.size() < 4) {
