@@ -46,7 +46,10 @@ public class SecondFragment extends Fragment {
         AtomicInteger ballY = new AtomicInteger();
         AtomicInteger steps = new AtomicInteger();
 
-        Map map = Map.generateMap(4);
+
+        int size = Integer.parseInt(getArguments().getString("size"));
+
+        Map map = Map.generateMap(size);
         switch (getArguments().getString("level")) {
             case "easy":
                 map.generateBordersEasy();
