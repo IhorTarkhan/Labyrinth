@@ -1,5 +1,7 @@
 package ua.knu.labyrinth;
 
+import static androidx.navigation.fragment.NavHostFragment.findNavController;
+
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -18,7 +20,6 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import ua.knu.labyrinth.databinding.FragmentSecondBinding;
@@ -40,8 +41,9 @@ public class SecondFragment extends Fragment {
 
         AtomicInteger ballX = new AtomicInteger();
         AtomicInteger ballY = new AtomicInteger();
+        AtomicInteger steps = new AtomicInteger();
 
-        Map map = Map.generateMap(7);
+        Map map = Map.generateMap(4);
         switch (getArguments().getString("level")) {
             case "easy":
                 map.generateBordersEasy();
@@ -62,49 +64,90 @@ public class SecondFragment extends Fragment {
         ball.getLayoutParams().width = (int) (cellSize * 0.8) + 50 + (int) (cellSize * 0.1);
         ball.setPadding(50 + (int) (cellSize * 0.1), 50 + (int) (cellSize * 0.1), 0, 0);
 
-        view.findViewById(R.id.button_down).setOnClickListener(
-                v -> {
-                    if (map.getPoint(ballX.get(), ballY.get()).isBorderBottom()) {
-                        showError(v);
-                    } else {
-                        ball.setY(ball.getY() + cellSize);
-                        ballY.getAndIncrement();
-                    }
-                });
+        view.findViewById(R.id.button_help).setOnClickListener(v -> {
+            map.goToExit(ballX.get(), ballY.get())
+                    .forEach(d -> {
+                        switch (d) {
+                            case LEFT:
+                                ball.setX(ball.getX() - cellSize);
+                                break;
+                            case RIGHT:
+                                ball.setX(ball.getX() + cellSize);
+                                break;
+                            case BOTTOM:
+                                ball.setY(ball.getY() - cellSize);
+                                break;
+                            case TOP:
+                                ball.setY(ball.getY() + cellSize);
+                                break;
+                        }
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    });
+        });
+        view.findViewById(R.id.button_down).setOnClickListener(v -> {
+            if (map.getPoint(ballX.get(), ballY.get()).isBorderBottom()) {
+                showError(v);
+            } else if (ballX.get() == map.getMatrix().size() - 1
+                    && ballY.get() + 1 == map.getMatrix().size() - 1) {
+                win(v, steps.get());
+            } else {
+                ball.setY(ball.getY() + cellSize);
+                ballY.getAndIncrement();
+                steps.getAndIncrement();
+            }
+        });
+        view.findViewById(R.id.button_up).setOnClickListener(v -> {
+            if (map.getPoint(ballX.get(), ballY.get()).isBorderTop()) {
+                showError(v);
+            } else if (ballX.get() == map.getMatrix().size() - 1
+                    && ballY.get() - 1 == map.getMatrix().size() - 1) {
+                win(v, steps.get());
+            } else {
+                ball.setY(ball.getY() - cellSize);
+                ballY.getAndDecrement();
+                steps.getAndIncrement();
+            }
+        });
+        view.findViewById(R.id.button_left).setOnClickListener(v -> {
+            if (map.getPoint(ballX.get(), ballY.get()).isBorderLeft()) {
+                showError(v);
+            } else if (ballX.get() - 1 == map.getMatrix().size() - 1
+                    && ballY.get() == map.getMatrix().size() - 1) {
+                win(v, steps.get());
+            } else {
+                ball.setX(ball.getX() - cellSize);
+                ballX.getAndDecrement();
+                steps.getAndIncrement();
+            }
+        });
+        view.findViewById(R.id.button_right).setOnClickListener(v -> {
+            if (map.getPoint(ballX.get(), ballY.get()).isBorderRight()) {
+                showError(v);
+            } else if (ballX.get() + 1 == map.getMatrix().size() - 1
+                    && ballY.get() == map.getMatrix().size() - 1) {
+                win(v, steps.get());
+            } else {
+                ball.setX(ball.getX() + cellSize);
+                ballX.getAndIncrement();
+                steps.getAndIncrement();
+            }
+        });
+    }
 
-        view.findViewById(R.id.button_up).setOnClickListener(
-                v -> {
-                    if (map.getPoint(ballX.get(), ballY.get()).isBorderTop()) {
-                        showError(v);
-                    } else {
-                        ball.setY(ball.getY() - cellSize);
-                        ballY.getAndDecrement();
-                    }
-                });
+    private void win(View v, int steps) {
+        Snackbar snackbar = Snackbar.make(v, "Win in " + ++steps + " steps", Snackbar.LENGTH_SHORT);
+        snackbar.getView().setBackgroundColor(Color.rgb(76, 175, 80));
+        snackbar.show();
+        findNavController(this).navigate(R.id.action_SecondFragment_to_FirstFragment);
 
-        view.findViewById(R.id.button_left).setOnClickListener(
-                v -> {
-                    if (map.getPoint(ballX.get(), ballY.get()).isBorderLeft()) {
-                        showError(v);
-                    } else {
-                        ball.setX(ball.getX() - cellSize);
-                        ballX.getAndDecrement();
-                    }
-                });
-
-        view.findViewById(R.id.button_right).setOnClickListener(
-                v -> {
-                    if (map.getPoint(ballX.get(), ballY.get()).isBorderRight()) {
-                        showError(v);
-                    } else {
-                        ball.setX(ball.getX() + cellSize);
-                        ballX.getAndIncrement();
-                    }
-                });
     }
 
     private void showError(View v) {
-        Snackbar snackbar = Snackbar.make(v, R.string.app_name, Snackbar.LENGTH_SHORT);
+        Snackbar snackbar = Snackbar.make(v, R.string.error, Snackbar.LENGTH_SHORT);
         snackbar.getView().setBackgroundColor(Color.RED);
         snackbar.show();
     }
@@ -112,12 +155,13 @@ public class SecondFragment extends Fragment {
     private void drawMap(@NonNull View view, Map map) {
         int cellSize = (screenWidth - 100) / map.getMatrix().size();
         TableLayout tableView = view.findViewById(R.id.layouttable_set_ships);
-        for (List<Point> row : map.getMatrix()) {
+        for (int i = 0; i < map.getMatrix().size(); i++) {
             TableRow tr = new TableRow(getActivity());
             tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
-            for (Point point : row) {
+            for (int j = 0; j < map.getMatrix().get(i).size(); j++) {
                 ImageView imageView = new ImageView(getActivity());
                 ArrayList<Drawable> layers = new ArrayList<>();
+                Point point = map.getMatrix().get(i).get(j);
                 if (point.isBorderBottom()) {
                     layers.add(getResources().getDrawable(R.drawable.border_bottomt));
                 }
@@ -129,6 +173,9 @@ public class SecondFragment extends Fragment {
                 }
                 if (point.isBorderRight()) {
                     layers.add(getResources().getDrawable(R.drawable.border_right));
+                }
+                if (i == map.getMatrix().size() - 1 && j == map.getMatrix().size() - 1) {
+                    layers.add(getResources().getDrawable(R.drawable.star));
                 }
                 LayerDrawable layerDrawable = new LayerDrawable(layers.toArray(new Drawable[0]));
                 imageView.setImageDrawable(layerDrawable);
