@@ -11,8 +11,12 @@
     <string name="up">Up</string>
     <string name="left">Left</string>
     <string name="right">Right</string>
+    <string name="error">Error</string>
 
     <string name="hello_world">Hello world</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="ball">ball</string>
+    <string name="help">Help</string>
+    <string name="continuous_slider">continuousSlider</string>
+    <string name="sliderLabel">Select map size</string>
 </resources>

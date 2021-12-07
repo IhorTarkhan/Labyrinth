@@ -335,46 +335,61 @@ public class Map {
         }
     }
 
-    private void findInDepth(Point current, List<Direction> steps){
+    private void findInDepth(Point current, List<Direction> steps, List<Point> visited){
         Point left = current.getLeft();
         Point right = current.getRight();
         Point bottom = current.getBottom();
         Point top = current.getTop();
 
         if (!current.isBorderLeft() && left != null) {
-            steps.add(Direction.LEFT);
-            findInDepth(left, steps);
-            steps.add(Direction.RIGHT);
+            if (!visited.contains(left)) {
+                visited.add(left);
+                steps.add(Direction.LEFT);
+                findInDepth(left, steps, visited);
+                steps.add(Direction.RIGHT);
+            }
         }
         if (!current.isBorderRight() && right != null) {
-            steps.add(Direction.RIGHT);
-            findInDepth(right, steps);
-            steps.add(Direction.LEFT);
+            if (!visited.contains(right)) {
+                visited.add(right);
+                steps.add(Direction.RIGHT);
+                findInDepth(right, steps, visited);
+                steps.add(Direction.LEFT);
+            }
         }
         if (!current.isBorderBottom() && bottom != null) {
-            steps.add(Direction.BOTTOM);
-            findInDepth(bottom, steps);
-            steps.add(Direction.TOP);
+            if (!visited.contains(bottom)) {
+                visited.add(bottom);
+                steps.add(Direction.BOTTOM);
+                findInDepth(bottom, steps, visited);
+                steps.add(Direction.TOP);
+            }
         }
         if (!current.isBorderTop() && top != null) {
-            steps.add(Direction.TOP);
-            findInDepth(top, steps);
-            steps.add(Direction.BOTTOM);
+            if (!visited.contains(top)) {
+                visited.add(top);
+                steps.add(Direction.TOP);
+                findInDepth(top, steps, visited);
+                steps.add(Direction.BOTTOM);
+            }
         }
     }
 
     public List<Direction> goToExit(int xPosition, int yPosition){
         List<Direction> steps = new ArrayList<>();
+        List<Point> visited = new ArrayList<>();
         Point player = getPoint(xPosition, yPosition);
-        findInDepth(player, steps);
+        visited.add(player);
+        findInDepth(player, steps, visited);
         int i = 0;
         for (; i < steps.size(); i++){
             switch (steps.get(i)){
                 case TOP:
-                    yPosition++;
+                    yPosition--;
                     break;
                 case BOTTOM:
-                    yPosition--;
+                    yPosition++;
+                    break;
                 case LEFT:
                     xPosition--;
                     break;

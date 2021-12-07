@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.slider.Slider;
+
 import ua.knu.labyrinth.databinding.FragmentFirstBinding;
 
 public class FirstFragment extends Fragment {
@@ -27,18 +29,21 @@ public class FirstFragment extends Fragment {
                 v -> {
                     Bundle bundle = new Bundle();
                     bundle.putString("level", "easy");
+                    bundle.putString("size", String.valueOf((int) view.<Slider>findViewById(R.id.continuousSlider).getValue()));
                     findNavController(this).navigate(R.id.action_FirstFragment_to_SecondFragment, bundle);
                 });
         view.findViewById(R.id.button_medium_level).setOnClickListener(
                 v -> {
                     Bundle bundle = new Bundle();
                     bundle.putString("level", "medium");
+                    bundle.putString("size", String.valueOf((int) view.<Slider>findViewById(R.id.continuousSlider).getValue()));
                     findNavController(this).navigate(R.id.action_FirstFragment_to_SecondFragment, bundle);
                 });
         view.findViewById(R.id.button_hard_level).setOnClickListener(
                 v -> {
                     Bundle bundle = new Bundle();
                     bundle.putString("level", "hard");
+                    bundle.putString("size", String.valueOf((int) view.<Slider>findViewById(R.id.continuousSlider).getValue()));
                     findNavController(this).navigate(R.id.action_FirstFragment_to_SecondFragment, bundle);
                 });
     }
