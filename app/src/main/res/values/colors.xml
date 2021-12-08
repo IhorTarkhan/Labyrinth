@@ -8,4 +8,5 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="ball">#EB382A</color>
+    <color name="help">#CDDC39</color>
 </resources>

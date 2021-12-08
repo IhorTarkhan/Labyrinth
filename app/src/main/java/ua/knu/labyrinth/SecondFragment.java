@@ -30,7 +30,11 @@ import ua.knu.labyrinth.game.Map;
 import ua.knu.labyrinth.game.Point;
 
 public class SecondFragment extends Fragment {
-
+    public static final double BALL_MARGIN = 0.1;
+    public static final int GAME_MARGIN = 50;
+    public static final int HELP_COLOR = Color.rgb(205, 220, 57);
+    public static final int WIN_COLOR = Color.rgb(76, 175, 80);
+    public static final int HIDE = -1000;
     private final int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
 
     @Override
@@ -47,36 +51,36 @@ public class SecondFragment extends Fragment {
         AtomicInteger ballY = new AtomicInteger();
         AtomicInteger steps = new AtomicInteger();
 
-
-        int size = Integer.parseInt(getArguments().getString("size"));
+        assert getArguments() != null;
+        String sizeString = getArguments().getString("size");
+        int size = Integer.parseInt(sizeString);
 
         Map map = Map.generateMap(size);
-        switch (getArguments().getString("level")) {
-            case "easy":
+        switch (GameLevel.valueOf(getArguments().getString(GameLevel.key))) {
+            case EASY:
                 map.generateBordersEasy();
                 break;
-            case "medium":
+            case MEDIUM:
                 map.generateBordersMedium();
                 break;
-            case "hard":
+            case HARD:
                 map.generateBordersHard();
                 break;
         }
-        int cellSize = (screenWidth - 100) / map.getMatrix().size();
+        int cellSize = (screenWidth - 2 * GAME_MARGIN) / map.getMatrix().size();
 
         drawMap(view, map);
 
         View ball = view.findViewById(R.id.ball);
-        ball.getLayoutParams().height = (int) (cellSize * 0.8) + 50 + (int) (cellSize * 0.1);
-        ball.getLayoutParams().width = (int) (cellSize * 0.8) + 50 + (int) (cellSize * 0.1);
-        ball.setPadding(50 + (int) (cellSize * 0.1), 50 + (int) (cellSize * 0.1), 0, 0);
+        ball.getLayoutParams().height = (int) (cellSize * (1 - 2 * BALL_MARGIN)) + GAME_MARGIN + (int) (cellSize * BALL_MARGIN);
+        ball.getLayoutParams().width = (int) (cellSize * (1 - 2 * BALL_MARGIN)) + GAME_MARGIN + (int) (cellSize * BALL_MARGIN);
+        ball.setPadding(GAME_MARGIN + (int) (cellSize * BALL_MARGIN), GAME_MARGIN + (int) (cellSize * BALL_MARGIN), 0, 0);
         TextView stepsText = view.findViewById(R.id.steps);
 
         view.findViewById(R.id.button_help).setOnClickListener(v -> {
             view.findViewById(R.id.button_down).setVisibility(View.GONE);
             new Thread(() -> {
                 try {
-
                     float downX = hideButton(view, R.id.button_down);
                     float upX = hideButton(view, R.id.button_up);
                     float leftX = hideButton(view, R.id.button_left);
@@ -114,8 +118,8 @@ public class SecondFragment extends Fragment {
                     showButton(view, R.id.button_left, leftX);
                     showButton(view, R.id.button_right, rightX);
                     showButton(view, R.id.button_help, helpX);
-                    Snackbar snackbar = Snackbar.make(v, "Helped", Snackbar.LENGTH_SHORT);
-                    snackbar.getView().setBackgroundColor(Color.rgb(205, 220, 57));
+                    Snackbar snackbar = Snackbar.make(v, R.string.helped, Snackbar.LENGTH_SHORT);
+                    snackbar.getView().setBackgroundColor(HELP_COLOR);
                     snackbar.show();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -133,8 +137,7 @@ public class SecondFragment extends Fragment {
             } else {
                 ball.setY(ball.getY() + cellSize);
                 ballY.getAndIncrement();
-                steps.getAndIncrement();
-                stepsText.setText("Steps: " + steps.get());
+                stepsText.setText("Steps: " + steps.incrementAndGet());
             }
         });
         view.findViewById(R.id.button_up).setOnClickListener(v -> {
@@ -146,8 +149,7 @@ public class SecondFragment extends Fragment {
             } else {
                 ball.setY(ball.getY() - cellSize);
                 ballY.getAndDecrement();
-                steps.getAndIncrement();
-                stepsText.setText("Steps: " + steps.get());
+                stepsText.setText("Steps: " + steps.incrementAndGet());
             }
         });
         view.findViewById(R.id.button_left).setOnClickListener(v -> {
@@ -159,8 +161,7 @@ public class SecondFragment extends Fragment {
             } else {
                 ball.setX(ball.getX() - cellSize);
                 ballX.getAndDecrement();
-                steps.getAndIncrement();
-                stepsText.setText("Steps: " + steps.get());
+                stepsText.setText("Steps: " + steps.incrementAndGet());
             }
         });
         view.findViewById(R.id.button_right).setOnClickListener(v -> {
@@ -172,8 +173,7 @@ public class SecondFragment extends Fragment {
             } else {
                 ball.setX(ball.getX() + cellSize);
                 ballX.getAndIncrement();
-                steps.getAndIncrement();
-                stepsText.setText("Steps: " + steps.get());
+                stepsText.setText("Steps: " + steps.incrementAndGet());
             }
         });
     }
@@ -186,13 +186,13 @@ public class SecondFragment extends Fragment {
     private float hideButton(@NonNull View view, @IdRes int id) {
         View viewById = view.findViewById(id);
         float originX = viewById.getX();
-        viewById.setX(-1000);
+        viewById.setX(HIDE);
         return originX;
     }
 
     private void win(View v, int steps) {
         Snackbar snackbar = Snackbar.make(v, "Win in " + ++steps + " steps", Snackbar.LENGTH_SHORT);
-        snackbar.getView().setBackgroundColor(Color.rgb(76, 175, 80));
+        snackbar.getView().setBackgroundColor(WIN_COLOR);
         snackbar.show();
         findNavController(this).navigate(R.id.action_SecondFragment_to_FirstFragment);
 

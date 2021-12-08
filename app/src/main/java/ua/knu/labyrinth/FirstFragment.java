@@ -28,21 +28,21 @@ public class FirstFragment extends Fragment {
         view.findViewById(R.id.button_easy_level).setOnClickListener(
                 v -> {
                     Bundle bundle = new Bundle();
-                    bundle.putString("level", "easy");
+                    bundle.putString(GameLevel.key, GameLevel.EASY.name());
                     bundle.putString("size", String.valueOf((int) view.<Slider>findViewById(R.id.continuousSlider).getValue()));
                     findNavController(this).navigate(R.id.action_FirstFragment_to_SecondFragment, bundle);
                 });
         view.findViewById(R.id.button_medium_level).setOnClickListener(
                 v -> {
                     Bundle bundle = new Bundle();
-                    bundle.putString("level", "medium");
+                    bundle.putString(GameLevel.key, GameLevel.MEDIUM.name());
                     bundle.putString("size", String.valueOf((int) view.<Slider>findViewById(R.id.continuousSlider).getValue()));
                     findNavController(this).navigate(R.id.action_FirstFragment_to_SecondFragment, bundle);
                 });
         view.findViewById(R.id.button_hard_level).setOnClickListener(
                 v -> {
                     Bundle bundle = new Bundle();
-                    bundle.putString("level", "hard");
+                    bundle.putString(GameLevel.key, GameLevel.HARD.name());
                     bundle.putString("size", String.valueOf((int) view.<Slider>findViewById(R.id.continuousSlider).getValue()));
                     findNavController(this).navigate(R.id.action_FirstFragment_to_SecondFragment, bundle);
                 });
